@@ -2,8 +2,7 @@ package controllers
 
 import javax.inject.{Inject, Singleton}
 
-import models.Address
-import models.Alert
+import models.{Address, Alert}
 import models.SubscriberRepository
 import play.api.data.Form
 import play.api.data.Forms._

@@ -3,7 +3,7 @@ package controllers
 import javax.inject.{Inject, Singleton}
 
 import com.twilio.twiml.{Body, Message, MessagingResponse}
-import models.{Alert}
+import models.{Address, Alert}
 import models.{SubscriberAction, AlertAction}
 import models.{SubscriberRepository, SubscriberTransitions}
 import play.api.data.Form
@@ -51,7 +51,17 @@ class TwilioController @Inject()(cc: ControllerComponents, repo: SubscriberRepos
   def performAction(action: SubscriberAction) = {
     action match {
       case AlertAction(addr) =>
-        val alert = Alert(addr)
+        val addresses = Address.geocode(addr)
+        if (addresses.length == 0) {
+          // TODO (benweedon 11/11/2017): Build in a mechanism for users to
+          // retry if no address match was found.
+          throw new IllegalArgumentException("no matching addresses found")
+        } else if (addresses.length > 1) {
+          // TODO (benweedon 11/11/2017): Build in a mechanism for users to
+          // validate which of the potential addresses they intended.
+          throw new IllegalArgumentException("the address entered was ambiguous")
+        }
+        val alert = Alert(addresses.head.toString)
         repo.listActive().map { subscribers =>
           alert.sendAlert(subscribers, messagesApi)
         }
