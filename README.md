@@ -1,13 +1,13 @@
 # Sms Alert System for Scala
 [![Build Status](https://travis-ci.org/ColectivaLegal/ScalaSmsAlertSystem.svg?branch=master)](https://travis-ci.org/ColectivaLegal/ScalaSmsAlertSystem)
 
-Below you will find basic setup instructions for developing the SysmAlertSystem. 
+Below you will find basic setup instructions for developing the SysmAlertSystem.
 
 To begin with, please ensure you have the following installed on your local development system:
 * JDK 8
 * [SBT](http://www.scala-sbt.org/download.html)
 
-JDK8 is currently required due to some incompatibilities between SBT's ivy implementation and JDK9 
+JDK8 is currently required due to some incompatibilities between SBT's ivy implementation and JDK9
 
 ## Twilio Setup
 
@@ -45,6 +45,8 @@ export TWILIO_USERNAME="..."
 export TWILIO_PASSWORD="..."
 # the phone number you created
 export TWILIO_PHONE="..."
+# your Google Maps geocoding API key
+export MAPS_API_KEY="..."
 sbt run
 ```
 

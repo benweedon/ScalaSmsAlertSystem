@@ -2,6 +2,8 @@ package controllers
 
 import javax.inject.{Inject, Singleton}
 
+import models.Address
+import models.Alert
 import models.SubscriberRepository
 import play.api.data.Form
 import play.api.data.Forms._
@@ -18,7 +20,7 @@ class AlertController @Inject()(cc: ControllerComponents, repo: SubscriberReposi
   val alertForm = Form(
     mapping(
       "address" -> nonEmptyText
-    )(models.Alert.apply)(models.Alert.unapply)
+    )(Alert.apply)(Alert.unapply)
   )
   def get = Action { implicit request =>
     Ok(views.html.alert(alertForm))
@@ -30,8 +32,22 @@ class AlertController @Inject()(cc: ControllerComponents, repo: SubscriberReposi
         Future.successful(BadRequest(views.html.alert(formWithErrors)))
       },
       alert => {
+        val addresses = Address.geocode(alert.address)
+        if (addresses.length == 0) {
+          // TODO (benweedon 11/11/2017): Build in a mechanism for users to
+          // retry if no address match was found.
+          throw new IllegalArgumentException("no matching addresses found")
+        } else if (addresses.length > 1) {
+          // TODO (benweedon 11/11/2017): Build in a mechanism for users to
+          // validate which of the potential addresses they intended.
+          throw new IllegalArgumentException("the address entered was ambiguous")
+        }
+        // TODO (benweedon 11/11/2017): Find a better way to do this than
+        // defining a new alert. Perhaps, for example, the form should just
+        // produce an address string, rather than an alert object.
+        val alertToSend = Alert(addresses.head.toString)
         repo.listActive().map { subscribers =>
-          val messages = alert.sendAlert(subscribers, messagesApi)
+          val messages = alertToSend.sendAlert(subscribers, messagesApi)
           Redirect(routes.HomeController.index())
             .flashing("success" -> ("Done! Messages sent with IDs " + messages.map(_.getSid()).mkString(",")))
         }

@@ -1,13 +1,13 @@
 name := "SmsAlertSystemV2"
- 
-version := "1.0" 
-      
+
+version := "1.0"
+
 lazy val `smsalertsystemv2` = (project in file(".")).enablePlugins(PlayScala)
 
 resolvers += "scalaz-bintray" at "https://dl.bintray.com/scalaz/releases"
-      
+
 resolvers += "Akka Snapshot Repository" at "http://repo.akka.io/snapshots/"
-      
+
 scalaVersion := "2.12.2"
 
 libraryDependencies ++= Seq(
@@ -20,5 +20,7 @@ libraryDependencies ++= Seq(
   "com.typesafe.play" %% "play-slick-evolutions" % "3.0.2",
   "com.h2database" % "h2" % "1.4.194",
   "com.typesafe.akka" %% "akka-testkit" % "2.5.4" % "test",
-  "org.scalatest" %% "scalatest" % "3.0.4" % "test"
-)      
+  "org.scalatest" %% "scalatest" % "3.0.4" % "test",
+  "com.google.maps" % "google-maps-services" % "0.2.4",
+  "org.slf4j" % "slf4j-nop" % "1.7.25" // needed for com.google.maps
+)
